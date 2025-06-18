@@ -1,0 +1,143 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+    depends_on:
+      - backend
+      - supabase-db
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - ENVIRONMENT=development
+      - SUPABASE_URL=http://supabase-kong:8000
+      - SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
+      - DEMO_MODE=true
+      - CORS_ORIGINS=http://localhost:3000,http://frontend:3000,http://127.0.0.1:3000
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      - supabase-db
+    networks:
+      - app-network
+
+  # Local Supabase Stack
+  supabase-db:
+    image: supabase/postgres:15.8.1.085
+    environment:
+      POSTGRES_PASSWORD: your-super-secret-and-long-postgres-password
+      POSTGRES_DB: postgres
+    ports:
+      - "54322:5432"
+    volumes:
+      - supabase-db-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  supabase-kong:
+    image: kong:2.8.1
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /var/lib/kong/kong.yml
+      KONG_DNS_ORDER: LAST,A,CNAME
+      KONG_PLUGINS: request-size-limiting,cors,key-auth,acl
+    ports:
+      - "54321:8000"
+    volumes:
+      - ./supabase/config/kong.yml:/var/lib/kong/kong.yml
+    depends_on:
+      - supabase-db
+    networks:
+      - app-network
+
+  supabase-auth:
+    image: supabase/gotrue:v2.174.0
+    environment:
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_API_PORT: 9999
+      GOTRUE_DB_DRIVER: postgres
+      GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:root@supabase-db:5432/postgres
+      GOTRUE_SITE_URL: http://localhost:3000
+      GOTRUE_URI_ALLOW_LIST: "http://localhost:3000"
+      GOTRUE_DISABLE_SIGNUP: "false"
+      GOTRUE_JWT_SECRET: your-super-secret-jwt-token-with-at-least-32-characters-long
+      GOTRUE_JWT_EXP: 3600
+      GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
+      GOTRUE_JWT_ADMIN_ROLES: service_role
+      GOTRUE_JWT_AUD: authenticated
+      GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
+    depends_on:
+      - supabase-db
+    networks:
+      - app-network
+
+  supabase-rest:
+    image: postgrest/postgrest:v12.2.12
+    environment:
+      PGRST_DB_URI: postgres://authenticator:root@supabase-db:5432/postgres
+      PGRST_DB_SCHEMAS: public
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_JWT_SECRET: your-super-secret-jwt-token-with-at-least-32-characters-long
+      PGRST_DB_USE_LEGACY_GUCS: "false"
+    depends_on:
+      - supabase-db
+    networks:
+      - app-network
+
+  supabase-studio:
+    image: supabase/studio:20241210-d82a48e
+    environment:
+      STUDIO_PG_META_URL: http://supabase-meta:8080
+      POSTGRES_PASSWORD: your-super-secret-and-long-postgres-password
+      DEFAULT_ORGANIZATION_NAME: "Vibe Stack"
+      DEFAULT_PROJECT_NAME: "Local Development"
+      SUPABASE_URL: http://localhost:54321
+      SUPABASE_PUBLIC_URL: http://localhost:54321
+      SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+      SUPABASE_SERVICE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
+    ports:
+      - "54323:3000"
+    depends_on:
+      - supabase-meta
+    networks:
+      - app-network
+
+  supabase-meta:
+    image: supabase/postgres-meta:v0.89.3
+    environment:
+      PG_META_PORT: 8080
+      PG_META_DB_HOST: supabase-db
+      PG_META_DB_NAME: postgres
+      PG_META_DB_USER: supabase_admin
+      PG_META_DB_PASSWORD: root
+    depends_on:
+      - supabase-db
+    networks:
+      - app-network
+
+volumes:
+  supabase-db-data:
+
+networks:
+  app-network:
+    driver: bridge

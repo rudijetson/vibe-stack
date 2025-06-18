@@ -5,12 +5,12 @@ export default function Home() {
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
       <div className="max-w-4xl mx-auto text-center">
         <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
-          <span className="block">Modern Full-Stack</span>
-          <span className="block text-primary-600">Application Boilerplate</span>
+          <span className="block">🌟 The Vibe Stack</span>
+          <span className="block text-purple-600">AI-First Full-Stack Template</span>
         </h1>
 
         <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg max-w-xl mx-auto">
-          A complete starter template featuring NextJS, FastAPI, Supabase, and LLM integrations.
+          Build AI-powered web apps in minutes, not weeks. Perfect for vibe coders who use Claude, ChatGPT, and Cursor to ship fast.
         </p>
 
         <div className="mt-8 sm:mt-12">
@@ -48,18 +48,18 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="mt-8 sm:mt-12">
-          <Link href="/dashboard" className="btn btn-primary">
-            Explore Dashboard
-          </Link>
-          <a
-            href="https://github.com/yourusername/fullstack-boilerplate"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ml-4 btn btn-secondary"
-          >
-            View on GitHub
-          </a>
+        <div className="mt-8 sm:mt-12 space-y-4">
+          <div className="space-x-4">
+            <Link href="/examples" className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg inline-block">
+              🚀 See Examples
+            </Link>
+            <Link href="/dashboard" className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg inline-block">
+              Try Dashboard
+            </Link>
+          </div>
+          <p className="text-sm text-gray-500">
+            ⚡ Ready to deploy • 🧠 AI-integrated • 🔐 Auth included • 🐳 Docker ready
+          </p>
         </div>
       </div>
     </div>

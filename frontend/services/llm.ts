@@ -50,14 +50,59 @@ export interface EmbeddingResponse {
   };
 }
 
+// Check if we're in demo mode
+const demoModeEnv = process.env.NEXT_PUBLIC_DEMO_MODE || '';
+const isDemoMode = demoModeEnv.toLowerCase() === 'true' || 
+                   !process.env.NEXT_PUBLIC_SUPABASE_URL || 
+                   process.env.NEXT_PUBLIC_SUPABASE_URL === '';
+
 // Helper to get authentication token
 async function getAuthToken() {
+  if (isDemoMode) {
+    return 'demo-token'; // Mock token for demo mode
+  }
+  
   const { data: { session } } = await supabase.auth.getSession();
   return session?.access_token;
 }
 
 // Helper to make authenticated API requests
 async function apiRequest(endpoint: string, method: string, body?: any) {
+  // In demo mode, use the demo endpoint instead
+  if (isDemoMode && endpoint === '/api/llm/generate') {
+    try {
+      console.log(`Making demo request to ${API_URL}/api/llm/demo`);
+      
+      const response = await fetch(`${API_URL}/api/llm/demo`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Demo API request failed with status ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      // Transform demo response to match expected format
+      return {
+        text: data.content,
+        model: data.model,
+        usage: {
+          prompt_tokens: Math.floor(Math.random() * 50) + 10,
+          completion_tokens: Math.floor(Math.random() * 100) + 20,
+          total_tokens: Math.floor(Math.random() * 150) + 30
+        }
+      };
+    } catch (error) {
+      console.error('Demo API request error:', error);
+      throw error;
+    }
+  }
+
   const token = await getAuthToken();
 
   if (!token) {

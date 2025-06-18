@@ -19,12 +19,21 @@ export default function Dashboard() {
         setUser(currentUser);
       } catch (error) {
         console.error('Error loading user:', error);
+        setUser(null);
       } finally {
         setIsLoading(false);
       }
     }
 
     loadUser();
+
+    // Listen for auth state changes (including demo mode changes)
+    const interval = setInterval(async () => {
+      const currentUser = await getCurrentUser();
+      setUser(currentUser);
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const handleSignOut = async () => {
@@ -34,6 +43,9 @@ export default function Dashboard() {
       router.push('/');
     } catch (error) {
       console.error('Error signing out:', error);
+      // Force sign out anyway
+      setUser(null);
+      router.push('/');
     }
   };
 
@@ -52,8 +64,8 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <Link href="/" className="font-bold text-xl text-primary-600">
-            Full Stack App
+          <Link href="/" className="font-bold text-xl text-purple-600">
+            🌟 Vibe Stack
           </Link>
 
           {user ? (

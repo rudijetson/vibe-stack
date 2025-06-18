@@ -1,19 +1,59 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import logging
+from typing import Optional
 
 from app.services.llm.llm_service import LLMService, get_llm_service
 from app.services.llm.embedding_service import EmbeddingService, get_embedding_service
 from app.models.llm import TextGenerationRequest, TextGenerationResponse, EmbeddingRequest, EmbeddingResponse
 from app.services.supabase.auth import SupabaseAuthService, get_auth_service
 from app.core.config import settings
+from app.core.demo import demo_service
 
 router = APIRouter()
 security = HTTPBearer()  # Make authentication required
 logger = logging.getLogger(__name__)
 
+# Import rate limiter
+from app.core.rate_limiter import limiter
+
+
+@router.post("/demo", response_model=dict)
+@limiter.limit("10/minute")
+async def demo_generate(request_data: dict, request: Request):
+    """Demo endpoint that works without authentication or API keys."""
+    try:
+        prompt = request_data.get("prompt", "Hello from the Vibe Stack!")
+        model = request_data.get("model", "demo")
+        
+        # Check if we're in demo mode
+        if demo_service.is_demo_mode(settings.SUPABASE_URL, settings.OPENAI_API_KEY, settings.DEMO_MODE):
+            response = demo_service.mock_llm_response(prompt, model)
+            return {
+                "content": response["content"],
+                "model": response["model"],
+                "demo": True,
+                "message": "🌟 Demo mode active! Add your API keys to use real AI services."
+            }
+        
+        # If we have real API keys, use the real service
+        return {
+            "content": "Real API integration is available. Use the /generate endpoint with authentication.",
+            "demo": False
+        }
+        
+    except Exception as e:
+        logger.error(f"Demo generation error: {str(e)}")
+        return {
+            "content": "Demo mode is working! This shows how AI integration works in the Vibe Stack.",
+            "model": "demo",
+            "demo": True,
+            "error": str(e)
+        }
+
 
 @router.post("/generate", response_model=TextGenerationResponse)
+@limiter.limit("30/minute")
 async def generate_text(
     request: TextGenerationRequest,
     credentials: HTTPAuthorizationCredentials = Depends(security),

@@ -8,6 +8,7 @@ class Settings(BaseSettings):
 
     # Application
     ENVIRONMENT: str = "development"
+    DEMO_MODE: str = ""  # Explicit demo mode toggle
 
     # CORS
     CORS_ORIGINS: Union[List[str], str] = ["http://localhost:3000"]

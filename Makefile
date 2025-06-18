@@ -15,6 +15,15 @@ dev: ## Start the full development environment
 	@echo "${GREEN}Starting full development environment...${NC}"
 	docker-compose up
 
+dev-demo: ## Start in demo mode (no external services needed)
+	@echo "${GREEN}Starting demo mode - no API keys required!${NC}"
+	@echo "${YELLOW}Visit http://localhost:3000/examples to see it in action${NC}"
+	DEMO_MODE=true NEXT_PUBLIC_DEMO_MODE=true docker-compose up
+
+dev-real: ## Start with real APIs (requires API keys in .env files)
+	@echo "${GREEN}Starting with real APIs - make sure your .env files are configured${NC}"
+	DEMO_MODE=false NEXT_PUBLIC_DEMO_MODE=false docker-compose up
+
 dev-frontend: ## Start only the frontend development server
 	@echo "${GREEN}Starting frontend development server...${NC}"
 	docker-compose up frontend

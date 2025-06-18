@@ -1,170 +1,177 @@
-# Full Stack Vibe Coding Template
+# 🌟 Vibe Stack - AI-First Full-Stack Template
 
-A modern, modular full-stack application starter template with NextJS frontend and Python FastAPI backend, supabase backend for Vibe coding.
+A modern, production-ready template for building web applications with AI integration. Perfect for developers who want to build with AI assistance or integrate LLM features.
 
-Contains all the common boilerplate features. Just add the README.md and CONTEXT.md files to AI coding agent's context.
+## ✨ What's Included
 
-Dont waste your time and tokens on boilerplate code. Use it to build your app
+- 🎨 **Next.js 14** - Modern React framework with App Router
+- 🐍 **FastAPI** - High-performance Python backend
+- 🔐 **Supabase Auth** - Complete authentication system
+- 🧠 **AI Integration** - Ready for OpenAI, Anthropic, and more
+- 🎨 **Tailwind CSS** - Utility-first styling
+- 🐳 **Docker** - Containerized development
+- 📊 **Vector Database** - Semantic search with Qdrant
+- ⚡ **Hot Reload** - Instant development feedback
 
-## Features
+## 🚀 Quick Start
 
-### Backend (Python FastAPI)
-- **FastAPI REST API** - Fast, type-checked API development
-- **Supabase Integration**
-  - Authentication (Google, LinkedIn, Email/Password)
-  - Database connectivity
-  - Realtime subscriptions
-  - Storage management
-  - Database migrations
-- **LLM Integration**
-  - OpenAI and Claude support
-  - Abstracted LLM service
-  - Vector embeddings service
-- **Vector Database**
-  - Qdrant integration
-  - Document storage and semantic search
-  - Automatic fallback to local in-memory database
+### ⚡ Zero-Setup Demo (30 seconds)
+No signups, no API keys, no configuration needed:
 
-### Frontend (Next.js)
-- **Next.js** - React framework with routing, SSR, and more
-- **Tailwind CSS** - Utility-first CSS framework
-- **Responsive design** - Mobile-first approach
-- **Supabase client** - For auth and data access
-- **Complete auth flows** - Login, signup, password reset
-
-## Getting Started
-
-### Prerequisites
-- Docker and Docker Compose
-- Make
-- Node.js 18+ (for local frontend development)
-- Python 3.10+ (for local backend development)
-- Supabase CLI (for database migrations, install with `brew install supabase/tap/supabase` or see [Supabase CLI docs](https://supabase.com/docs/guides/cli))
-
-### Quick Start
-
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/humanstack/vibe-coding-boilerplate
-   cd vibe-coding-boilerplate
-   ```
-
-2. Run the first-time setup script to configure your environment:
-   ```bash
-   ./first-time.sh
-   ```
-   This will:
-   - Check for required tools
-   - Guide you through setting up API keys
-   - Generate the necessary .env files
-
-3. Start the development environment:
-   ```bash
-   make dev
-   ```
-
-4. Access the applications:
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:8000
-   - API Documentation: http://localhost:8000/docs
-
-## Setup Without Script
-
-If you prefer to set up manually:
-
-1. Copy the `.env.example` file to `.env`:
-   ```bash
-   cp .env.example .env
-   ```
-
-2. Create a frontend environment file:
-   ```bash
-   cp .env.example frontend/.env.local
-   ```
-
-3. Edit both files to add your API keys for:
-   - Supabase (required for auth)
-   - OpenAI and/or Anthropic (for LLM features)
-   - Qdrant (for vector database features, optional)
-
-4. Start the development environment:
-   ```bash
-   make dev
-   ```
-
-## Authentication Setup
-
-For detailed instructions on setting up authentication providers (Google, LinkedIn, GitHub, etc.), see the [Authentication Setup Guide](./AuthSetup.md).
-
-## Structure
-
-```
-/
-├── backend/                  # Python FastAPI application
-│   ├── app/                  # Application code
-│   │   ├── api/              # API endpoints
-│   │   ├── core/             # Core functionality
-│   │   ├── models/           # Data models
-│   │   └── services/         # Service layer
-│   │       ├── llm/          # LLM services
-│   │       ├── supabase/     # Supabase services
-│   │       └── vectordb/     # Vector DB services
-│   ├── BACKEND-CONTEXT.md    # Backend documentation
-│
-├── frontend/                 # Next.js application
-│   ├── app/                  # Next.js app directory
-│   ├── components/           # UI components
-│   ├── services/             # API services
-│   ├── FRONTEND-CONTEXT.md   # Frontend documentation
-│
-├── supabase/                 # Supabase configuration
-│   ├── migrations/           # Database migrations
-│   ├── seed.sql              # Database seed data
-│   └── README.md             # Migrations documentation
-│
-├── docker-compose.yml        # Docker configuration
-├── Makefile                  # Project commands
-├── first-time.sh             # Setup script
-├── .gitignore                # Git ignore patterns
-├── .env.example              # Example environment variables
-└── FutureImprovements.md     # Future feature roadmap
+```bash
+git clone https://github.com/your-username/vibe-stack.git my-app
+cd my-app
+make dev-demo  # Forces demo mode
 ```
 
-## Common Tasks
+**Instantly access:**
+- **Homepage**: http://localhost:3000 - Beautiful landing page
+- **AI Demo**: http://localhost:3000/examples - Working AI integration
+- **Backend API**: http://localhost:8000 - Rate-limited FastAPI
+- **API Docs**: http://localhost:8000/docs - Auto-generated documentation
 
-### Development
+### 🔧 Full Setup (5 minutes)
+For real projects with database and authentication:
 
-- Start all services: `make dev`
-- Frontend only: `make dev-frontend`
-- Backend only: `make dev-backend`
+```bash
+# 1. Copy environment files
+cp .env.example .env
+cp .env.example frontend/.env.local
 
-### Production
+# 2. Add your Supabase keys (see SUPABASE-SETUP.md)
+# 3. Start with real services
+make dev-real  # Forces real API mode
+```
 
-- Start production services: `make prod`
-- Frontend only: `make prod-frontend`
-- Backend only: `make prod-backend`
+**Quick Setup:** [QUICK-SETUP.md](./QUICK-SETUP.md) | **Detailed Guide:** [SUPABASE-SETUP.md](./SUPABASE-SETUP.md)
 
-### Cleanup
+## 📚 Documentation
 
-- Clean up containers: `make clean`
+- **[Vibe Stack Guide](./VIBE-STACK-GUIDE.md)** - Complete beginner-friendly walkthrough  
+- **[Supabase Setup](./SUPABASE-SETUP.md)** - Database setup options (demo, cloud, local)
+- **[New Project Checklist](./NEW-PROJECT-CHECKLIST.md)** - Quick start for new projects
+- **[Technical Docs](./CLAUDE.md)** - Detailed architecture and development guide
 
-### Database Migrations
+## 🏗️ Architecture
 
-- Create a migration: `make db-migration-new name=create_table`
-- Apply migrations to remote: `make db-apply`
-- List applied migrations: `make db-list`
-- Check pending migrations: `make db-status`
-- Push migrations (same as apply): `make db-push`
+```
+Frontend (Next.js)     Backend (FastAPI)      External Services
+     ↓                      ↓                      ↓
+┌─────────────┐      ┌─────────────┐         ┌─────────────┐
+│  React UI   │ ←──→ │  REST API   │ ←─────→ │  Supabase   │
+│  Auth Pages │      │  Auth Logic │         │  (Database) │
+│  Dashboard  │      │  AI Routes  │ ←─────→ │  OpenAI     │
+└─────────────┘      └─────────────┘         │  Anthropic  │
+                                             │   Qdrant    │
+                                             └─────────────┘
+```
 
-See `supabase/README.md` for more details on database migrations.
+## 🛠️ Available Commands
 
-## Documentation
+```bash
+# Development Modes
+make dev-demo         # Demo mode (no API keys needed)
+make dev-real         # Real APIs (requires .env setup)
+make dev              # Auto-detect (demo if no keys, real if keys)
 
-- [Backend Documentation](./backend/BACKEND-CONTEXT.md)
-- [Frontend Documentation](./frontend/FRONTEND-CONTEXT.md)
-- [Authentication Setup Guide](./AuthSetup.md)
-- [Future Improvements](./FutureImprovements.md)
+# Individual Services  
+make dev-frontend     # Frontend only
+make dev-backend      # Backend only
 
-## License
+# Production
+make prod             # Start production environment
 
-MIT
+# Database
+make db-apply         # Apply database migrations
+make db-status        # Check migration status
+
+# Utilities
+make clean            # Remove containers and volumes
+make help             # Show all commands
+```
+
+## 🔧 Environment Setup
+
+Create environment files:
+```bash
+cp .env.example .env
+cp .env.example frontend/.env.local
+```
+
+Required variables:
+- `SUPABASE_URL` - Your Supabase project URL
+- `SUPABASE_ANON_KEY` - Your Supabase anonymous key  
+- `SUPABASE_SERVICE_KEY` - Your Supabase service key
+
+Optional (for AI features):
+- `OPENAI_API_KEY` - From [platform.openai.com](https://platform.openai.com)
+- `ANTHROPIC_API_KEY` - From [console.anthropic.com](https://console.anthropic.com)
+
+## 🎯 What You Get Out of the Box
+
+### Authentication
+- ✅ Email/password signup and login
+- ✅ OAuth (Google, LinkedIn)
+- ✅ Password reset flow
+- ✅ Protected routes
+- ✅ User session management
+
+### AI Integration
+- ✅ OpenAI GPT integration
+- ✅ Anthropic Claude integration
+- ✅ Streaming responses
+- ✅ Token counting
+- ✅ Error handling
+
+### Database Features
+- ✅ User profiles
+- ✅ Row Level Security (RLS)
+- ✅ Migration system
+- ✅ Real-time subscriptions
+
+### Developer Experience
+- ✅ Hot reload for frontend and backend
+- ✅ Auto-generated API documentation
+- ✅ Type safety (TypeScript + Pydantic)
+- ✅ Docker containerization
+- ✅ Security headers
+- ✅ CORS configuration
+
+## 🚀 Deployment
+
+This template is designed for easy deployment to:
+- **Frontend**: Vercel, Netlify
+- **Backend**: Railway, Render, Google Cloud Run
+- **Database**: Supabase (already hosted)
+
+See deployment guides in the documentation.
+
+## 🤝 Perfect For
+
+- 🧠 **AI-powered applications**
+- 📱 **SaaS products**
+- 🔐 **Apps requiring authentication**
+- ⚡ **Rapid prototyping**
+- 🎓 **Learning full-stack development**
+- 🤖 **Building with AI assistance (Claude, ChatGPT)**
+
+## 📖 Learning Resources
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [Supabase Documentation](https://supabase.com/docs)
+- [Tailwind CSS](https://tailwindcss.com/)
+
+## 🆘 Getting Help
+
+1. Check the [Vibe Stack Guide](./VIBE-STACK-GUIDE.md) for detailed explanations
+2. Use the documentation with AI assistants like Claude or ChatGPT
+3. Open an issue for bugs or feature requests
+
+## 📄 License
+
+MIT License - feel free to use this for personal or commercial projects.
+
+---
+
+Built with ❤️ for the vibe coding community
