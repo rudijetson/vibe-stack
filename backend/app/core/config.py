@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     # LLM
     OPENAI_API_KEY: str = ""
     ANTHROPIC_API_KEY: str = ""
+    GEMINI_API_KEY: str = ""
 
     # Vector Database
     QDRANT_URL: str = ""

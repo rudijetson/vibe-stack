@@ -14,10 +14,10 @@ class TextGenerationRequest(BaseModel):
     """Request for text generation."""
 
     prompt: str
-    model: str = "gpt-3.5-turbo"
+    model: str = "o4-mini"
     max_tokens: int = Field(default=500, ge=1, le=4000)
     temperature: float = Field(default=0.7, ge=0.0, le=2.0)
-    provider: Literal["openai", "anthropic"] = "openai"
+    provider: Literal["openai", "anthropic", "gemini"] = "openai"
 
 
 class TextGenerationResponse(BaseModel):
@@ -33,7 +33,7 @@ class EmbeddingRequest(BaseModel):
 
     text: str
     model: str = "text-embedding-ada-002"
-    provider: Literal["openai", "anthropic"] = "openai"
+    provider: Literal["openai", "anthropic", "gemini"] = "openai"
 
 
 class EmbeddingResponse(BaseModel):

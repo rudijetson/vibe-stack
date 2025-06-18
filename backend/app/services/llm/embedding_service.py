@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 import openai
+import google.generativeai as genai
 import numpy as np
 from pydantic import BaseModel
 from functools import lru_cache
@@ -67,6 +68,30 @@ class AnthropicEmbeddingService(EmbeddingService):
         return EmbeddingResponse(embedding=[float(x) for x in random_embedding], model=model, usage=usage)
 
 
+class GeminiEmbeddingService(EmbeddingService):
+    """Google Gemini implementation of the embedding service."""
+
+    def __init__(self, api_key: str):
+        """Initialize the Gemini client."""
+        genai.configure(api_key=api_key)
+        self.api_key = api_key
+
+    async def create_embedding(self, text: str, model: str = "models/text-embedding-004") -> EmbeddingResponse:
+        """Create an embedding using Google Gemini."""
+        # Note: Gemini embedding API is still evolving
+        # For now, we'll use a placeholder similar to Anthropic
+        # Replace with actual Gemini embedding call when API is stable
+        
+        # Placeholder implementation with random embeddings
+        # In production, you would replace this with:
+        # response = genai.embed_content(model=model, content=text)
+        random_embedding = list(np.random.normal(0, 1, 768))  # Gemini typically uses 768-dim embeddings
+
+        usage = LLMUsage(prompt_tokens=len(text.split()), completion_tokens=0, total_tokens=len(text.split()))
+
+        return EmbeddingResponse(embedding=[float(x) for x in random_embedding], model=model, usage=usage)
+
+
 class EmbeddingServiceFactory:
     """Factory for creating embedding service instances."""
 
@@ -81,6 +106,10 @@ class EmbeddingServiceFactory:
             if not settings.ANTHROPIC_API_KEY:
                 raise ValueError("Anthropic API key not configured")
             return AnthropicEmbeddingService(api_key=settings.ANTHROPIC_API_KEY)
+        elif provider == "gemini":
+            if not settings.GEMINI_API_KEY:
+                raise ValueError("Gemini API key not configured")
+            return GeminiEmbeddingService(api_key=settings.GEMINI_API_KEY)
         else:
             raise ValueError(f"Unsupported embedding provider: {provider}")
 

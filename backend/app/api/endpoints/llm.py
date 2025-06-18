@@ -9,6 +9,7 @@ from app.models.llm import TextGenerationRequest, TextGenerationResponse, Embedd
 from app.services.supabase.auth import SupabaseAuthService, get_auth_service
 from app.core.config import settings
 from app.core.demo import demo_service
+from app.config.models import get_all_models_info, DEFAULT_MODELS, MODELS
 
 router = APIRouter()
 security = HTTPBearer()  # Make authentication required
@@ -64,7 +65,7 @@ async def generate_text(
     """Generate text using the specified LLM model."""
     try:
         # Log request details for debugging
-        logger.info(f"Sameer Received text generation request with model: {request}, provider: {credentials}")
+        logger.info(f"Received text generation request with model: {request.model}, provider: {request.provider}")
 
         # Validate user authentication
         try:
@@ -80,9 +81,8 @@ async def generate_text(
 
         # Get the right LLM service based on provider
         try:
-            if request.provider:
-                llm_service = get_llm_service(request.provider)
-                logger.info(f"Using LLM provider: {request.provider}")
+            llm_service = get_llm_service(request.provider)
+            logger.info(f"Using LLM provider: {request.provider}")
         except ValueError as provider_error:
             logger.error(f"Provider error: {str(provider_error)}")
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(provider_error))
@@ -96,6 +96,8 @@ async def generate_text(
                 raise ValueError("OpenAI API key not configured. Please set the OPENAI_API_KEY environment variable.")
             elif request.provider == "anthropic" and not settings.ANTHROPIC_API_KEY:
                 raise ValueError("Anthropic API key not configured. Please set the ANTHROPIC_API_KEY environment variable.")
+            elif request.provider == "gemini" and not settings.GEMINI_API_KEY:
+                raise ValueError("Gemini API key not configured. Please set the GEMINI_API_KEY environment variable.")
 
             response = await llm_service.generate_text(
                 prompt=request.prompt, model=request.model, max_tokens=request.max_tokens, temperature=request.temperature
@@ -142,3 +144,43 @@ async def create_embedding(
     except Exception as e:
         logger.error(f"Embedding creation failed: {str(e)}", exc_info=True)
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Embedding creation failed: {str(e)}")
+
+
+@router.get("/models", response_model=dict)
+async def get_models():
+    """Get information about all available models."""
+    try:
+        return get_all_models_info()
+    except Exception as e:
+        logger.error(f"Failed to get models info: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to get models info: {str(e)}")
+
+
+@router.get("/providers", response_model=dict)
+async def get_providers():
+    """Get information about available providers and their status."""
+    try:
+        providers = {
+            "openai": {
+                "name": "OpenAI",
+                "configured": bool(settings.OPENAI_API_KEY),
+                "default_model": DEFAULT_MODELS["openai"],
+                "models": [model.name for model in MODELS.values() if model.provider == "openai"]
+            },
+            "anthropic": {
+                "name": "Anthropic (Claude)",
+                "configured": bool(settings.ANTHROPIC_API_KEY),
+                "default_model": DEFAULT_MODELS["anthropic"],
+                "models": [model.name for model in MODELS.values() if model.provider == "anthropic"]
+            },
+            "gemini": {
+                "name": "Google Gemini",
+                "configured": bool(settings.GEMINI_API_KEY),
+                "default_model": DEFAULT_MODELS["gemini"],
+                "models": [model.name for model in MODELS.values() if model.provider == "gemini"]
+            }
+        }
+        return {"providers": providers}
+    except Exception as e:
+        logger.error(f"Failed to get providers info: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to get providers info: {str(e)}")
