@@ -27,6 +27,27 @@ make dev-backend   # Backend only on port 8000
 # API Docs: http://localhost:8000/docs
 ```
 
+### LLM API Testing
+The system supports 10 LLM models across 3 providers with comprehensive testing capabilities:
+
+```bash
+# Test model information endpoints
+curl http://localhost:8000/api/models/info
+curl http://localhost:8000/api/models/defaults
+curl http://localhost:8000/api/models/cheapest
+
+# Test demo endpoint (no auth required)
+curl -X POST http://localhost:8000/api/llm/demo \
+  -H "Content-Type: application/json" \
+  -d '{"prompt":"Hello!", "model":"demo"}'
+
+# Test authenticated endpoints (requires auth token)
+curl -X POST http://localhost:8000/api/llm/generate \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{"prompt":"Hello!", "model":"o4-mini", "provider":"openai"}'
+```
+
 ### Production
 ```bash
 make prod           # Start production environment
@@ -77,11 +98,33 @@ make clean            # Remove containers and volumes
 ### Backend Structure
 - **API Endpoints**: FastAPI routes in `backend/app/api/endpoints/`
 - **Service Layer**: Business logic in `backend/app/services/`
-  - `llm/`: LLM integrations (OpenAI, Anthropic)
+  - `llm/`: Multi-LLM integrations (OpenAI, Anthropic, Google Gemini)
   - `supabase/`: Database and auth services
   - `vectordb/`: Vector database operations
 - **Models**: Pydantic models in `backend/app/models/`
 - **Core**: Configuration and utilities in `backend/app/core/`
+- **Config**: Model definitions and configurations in `backend/app/config/`
+
+### LLM Integration Architecture
+The system provides comprehensive LLM support with:
+
+**Supported Models (10 total):**
+- **OpenAI**: o3-pro, o3, o3-mini, o4-mini
+- **Anthropic**: claude-opus-4, claude-3-5-sonnet, claude-3-haiku  
+- **Google Gemini**: gemini-2.5-pro, gemini-2.5-flash, gemini-1.5-pro
+
+**Key Components:**
+- `backend/app/services/llm/llm_service.py` - Main LLM service implementations
+- `backend/app/services/llm/embedding_service.py` - Text embedding services
+- `backend/app/config/models.py` - Comprehensive model configurations with pricing, capabilities, and recommendations
+- `backend/app/api/endpoints/llm.py` - LLM API endpoints with authentication and rate limiting
+
+**Features:**
+- **Smart Model Selection**: Task-specific recommendations and tier-based pricing
+- **Demo Mode**: Test integration without API keys
+- **Error Handling**: Graceful degradation and comprehensive error responses
+- **Rate Limiting**: 10/min for demo, 30/min for authenticated endpoints
+- **Authentication**: Bearer token validation via Supabase Auth
 
 ### Authentication Flow
 - Supabase Auth handles all authentication
@@ -100,7 +143,15 @@ Two `.env` files are required:
 - `.env`: Backend environment variables
 - `frontend/.env.local`: Frontend environment variables
 
-Both files need Supabase credentials and optional API keys for LLM services.
+**Required for authentication:**
+- `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_KEY`
+
+**Optional for AI features (any combination):**
+- `OPENAI_API_KEY` - Enables OpenAI models (o3-pro, o3, o3-mini, o4-mini)
+- `ANTHROPIC_API_KEY` - Enables Anthropic models (claude-opus-4, claude-3-5-sonnet, claude-3-haiku)  
+- `GEMINI_API_KEY` - Enables Google Gemini models (gemini-2.5-pro, gemini-2.5-flash, gemini-1.5-pro)
+
+**Demo Mode**: If no valid API keys are provided, the system automatically enables demo mode with mock AI responses.
 
 ## Development Guidelines
 

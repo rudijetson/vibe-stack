@@ -7,7 +7,7 @@ A modern, production-ready template for building web applications with AI integr
 - 🎨 **Next.js 14** - Modern React framework with App Router
 - 🐍 **FastAPI** - High-performance Python backend
 - 🔐 **Supabase Auth** - Complete authentication system
-- 🧠 **AI Integration** - Ready for OpenAI, Anthropic, and more
+- 🧠 **Multi-LLM Integration** - OpenAI, Anthropic Claude, Google Gemini support
 - 🎨 **Tailwind CSS** - Utility-first styling
 - 🐳 **Docker** - Containerized development
 - 📊 **Vector Database** - Semantic search with Qdrant
@@ -90,6 +90,40 @@ make clean            # Remove containers and volumes
 make help             # Show all commands
 ```
 
+## 🤖 AI Models & Providers
+
+### Supported LLM Models (10 Total)
+
+**OpenAI Models:**
+- **o3-pro** - Highest reasoning capability (Premium tier)
+- **o3** - Advanced reasoning, cost-efficient (Next tier) 
+- **o3-mini** - Fast reasoning model (Next tier)
+- **o4-mini** - Fastest, most cost-effective (Budget tier)
+
+**Anthropic Claude Models:**
+- **claude-opus-4** - Flagship model, best for deep reasoning (Premium tier)
+- **claude-3-5-sonnet** - Balanced performance and cost (Next tier)
+- **claude-3-haiku** - Lightweight, fastest Claude model (Budget tier)
+
+**Google Gemini Models:**
+- **gemini-2.5-pro** - Deep Think, 1M token context (Premium tier)
+- **gemini-2.5-flash** - Fastest Gemini, high-volume efficient (Next tier)
+- **gemini-1.5-pro** - Previous generation, affordable (Budget tier)
+
+### Smart Model Selection
+- **Task-specific recommendations**: Different models optimized for transcript processing, outline generation, slide generation, reasoning tasks
+- **Tier-based pricing**: Budget, next-tier, and premium options for different use cases
+- **Automatic fallbacks**: Graceful degradation and error handling
+- **Provider status**: Real-time API key validation and provider availability
+
+### API Endpoints
+- `/api/models/info` - Complete model information and capabilities
+- `/api/models/defaults` - Default model for each provider
+- `/api/models/cheapest` - Most cost-effective models
+- `/api/llm/generate` - Text generation with any supported model
+- `/api/llm/embedding` - Text embeddings
+- `/api/llm/demo` - Test AI integration without API keys
+
 ## 🔧 Environment Setup
 
 Create environment files:
@@ -106,6 +140,7 @@ Required variables:
 Optional (for AI features):
 - `OPENAI_API_KEY` - From [platform.openai.com](https://platform.openai.com)
 - `ANTHROPIC_API_KEY` - From [console.anthropic.com](https://console.anthropic.com)
+- `GEMINI_API_KEY` - From [aistudio.google.com](https://aistudio.google.com)
 
 ## 🎯 What You Get Out of the Box
 
@@ -117,11 +152,12 @@ Optional (for AI features):
 - ✅ User session management
 
 ### AI Integration
-- ✅ OpenAI GPT integration
-- ✅ Anthropic Claude integration
-- ✅ Streaming responses
-- ✅ Token counting
-- ✅ Error handling
+- ✅ **10 LLM Models**: Latest OpenAI (o3-pro, o3, o3-mini, o4-mini), Anthropic Claude (Opus 4, Sonnet 4, Haiku), Google Gemini (2.5 Pro, 2.5 Flash, 1.5 Pro)
+- ✅ **Smart Model Selection**: Budget, balanced, and premium tiers with task-specific recommendations
+- ✅ **Multi-Provider Support**: Switch between OpenAI, Anthropic, and Google seamlessly
+- ✅ **Comprehensive API**: Text generation, embeddings, model comparison, provider status
+- ✅ **Demo Mode**: Test AI integration without API keys
+- ✅ **Production Ready**: Error handling, rate limiting, authentication, token usage tracking
 
 ### Database Features
 - ✅ User profiles

@@ -13,6 +13,14 @@ The Vibe Stack is a pre-built foundation for creating web applications with:
 
 Think of it like a pre-built house frame - you just need to add the rooms and decorations!
 
+### 🤖 Built-in AI Superpowers
+The Vibe Stack comes with **10 AI models** ready to use:
+- **OpenAI**: Latest models including o3-pro and o4-mini
+- **Claude**: Anthropic's powerful reasoning models
+- **Gemini**: Google's multimodal AI with huge context windows
+
+No need to figure out API integrations - it's all ready to go!
+
 ## 🏗️ The Big Picture: How Everything Connects
 
 ```
@@ -93,7 +101,7 @@ These are like menu items - each file handles different requests:
 
 #### `/backend/app/services/` - The Workers
 These do the actual work:
-- `llm/` - Talks to ChatGPT/Claude
+- `llm/` - **Complete AI integration** - Supports 10 models from OpenAI, Anthropic, and Google Gemini
   - `openai_service.py` - ChatGPT integration
   - `anthropic_service.py` - Claude integration
 - `supabase/` - Database operations
@@ -139,6 +147,18 @@ These store your secret keys:
 
 **🔑 Key Concept**: NEVER share these files! They're like your house keys.
 
+#### 🤖 AI API Keys Setup
+To use AI features, add these to your `.env` file:
+
+```bash
+# Choose any combination - you don't need all of them!
+OPENAI_API_KEY=your-openai-key      # Enables: o3-pro, o3, o3-mini, o4-mini
+ANTHROPIC_API_KEY=your-claude-key   # Enables: claude-opus-4, claude-sonnet, claude-haiku
+GEMINI_API_KEY=your-gemini-key      # Enables: gemini-2.5-pro, gemini-flash, gemini-1.5-pro
+```
+
+**No API keys?** No problem! The system automatically enables **demo mode** with realistic mock AI responses.
+
 ### The Makefile
 Simple commands to run your app:
 - `make dev` - Start development mode
@@ -154,10 +174,16 @@ Let's follow a user asking an AI question:
 1. **User types question** in the frontend (`/frontend/components/llm/TextGenerator.tsx`)
 2. **Frontend sends request** to backend (`POST /api/llm/generate`)
 3. **Backend receives** in endpoint (`/backend/app/api/endpoints/llm.py`)
-4. **Service processes** request (`/backend/app/services/llm/openai_service.py`)
-5. **AI responds** (OpenAI API)
-6. **Backend returns** response to frontend
+4. **Service processes** request (`/backend/app/services/llm/llm_service.py`)
+5. **AI responds** (OpenAI/Anthropic/Gemini API - automatically chooses based on model)
+6. **Backend returns** response to frontend with usage stats
 7. **User sees answer** on screen
+
+**🎯 Smart Features:**
+- Automatically routes to the right AI provider based on model choice
+- Tracks token usage and costs
+- Falls back to demo mode if API keys are missing
+- Rate limiting prevents abuse
 
 ## 🚀 Common Tasks for Vibe Coders
 
